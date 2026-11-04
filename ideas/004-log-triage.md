@@ -2,7 +2,7 @@
 id: "004"
 slug: log-triage
 title: log-triage — collapse a noisy log into its recurring templates
-status: in-pr
+status: shipped
 priority: 4
 created: 2026-11-04
 language: python
@@ -54,7 +54,7 @@ Live tailing, regex dialects, ML clustering, cross-file correlation, colour.
 
 ## Notes
 
-PR: (owner applies)
+PR: https://github.com/disbenovi/idea-lab/pull/4
 
 Implemented 2026-11-04: stdlib CLI, fixture and regression tests.
 Timestamp bounds follow encounter order, not chronological min/max.
