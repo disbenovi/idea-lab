@@ -2,7 +2,7 @@
 id: "005"
 slug: jsonl-profile
 title: jsonl-profile — derive a schema from a JSONL dump
-status: in-pr
+status: shipped
 priority: 5
 created: 2026-11-04
 updated: 2026-11-04
