@@ -6,6 +6,10 @@ not for the largest change you can make.
 
 ## 0. Preconditions
 
+- **Repository allowlist: `disbenovi/idea-lab` and nothing else.** Other
+  repositories on the same account are off limits — do not clone, list, read,
+  fork or modify them, not even to look. If a task seems to need one, stop and
+  report instead.
 - Verify `git` exists on your machine. If it does not, report that and stop;
   do not attempt a system-wide install.
 - If you cannot clone or push this repository, say exactly which access is
