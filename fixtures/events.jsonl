@@ -1,0 +1,10 @@
+{"user_id":1,"note":null,"status":"ok"}
+{"user_id":2,"note":null,"status":"ok"}
+{"user_id":3,"note":null,"status":"error"}
+{"user_id":1,"note":null,"status":"ok"}
+{"user_id":2,"note":"ready","status":"ok"}
+{"user_id":3,"note":"retry","status":"error"}
+{"user_id":1,"status":"ok"}
+{"user_id":2,"status":"ok"}
+{"user_id":3,"status":"ok"}
+{"user_id":1,"status":"ok"}
