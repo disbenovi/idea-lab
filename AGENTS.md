@@ -57,10 +57,10 @@ not for the largest change you can make.
   idea file as a follow-up.
 - Language: prefer Python (stdlib first) or Node, whichever the idea file
   names. No build toolchain that needs more than 2 GB.
-- Install dependencies only inside this repository (virtualenv or `node_modules`),
-  never system-wide, never with `sudo`.
-- Network egress is limited to `github.com`, `pypi.org`, `registry.npmjs.org`.
-  Anything else: stop and report.
+- There is no dependency installation: no network, so no virtualenv that needs
+  to fetch, no `node_modules`. Standard library, or code you write yourself.
+- There is no egress at all. If an idea turns out to need a network call, set
+  `status: blocked-needs-host` with that reason and stop.
 - No secrets in any file, fixture, test, log or PR body. Never print environment
   variables. Never read or copy `.env`, `~/.ssh`, `~/.config` or credential files.
 
