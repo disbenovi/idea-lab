@@ -10,11 +10,17 @@ not for the largest change you can make.
   repositories on the same account are off limits — do not clone, list, read,
   fork or modify them, not even to look. If a task seems to need one, stop and
   report instead.
-- Verify `git` exists on your machine. If it does not, report that and stop;
-  do not attempt a system-wide install.
-- If you cannot clone or push this repository, say exactly which access is
+- **Where the work runs: a Codex cloud environment for this repository, or a
+  connected computer the owner has authorised for this task. Never your own
+  cloud computer.** Your own machine is read-only for this repository — it holds
+  no git credential, and the GitHub plugin cannot push by design — so trying to
+  build there wastes the run. If no execution environment is available, say so
+  and stop.
+- The GitHub plugin is for reading, searching and understanding code. It does not
+  push, and it is not an execution environment.
+- If you cannot reach the execution environment, say exactly which access is
   missing. **Never ask the owner for a token in chat, and never write one into a
-  file, commit, log or PR body.** Use the platform's own GitHub connection.
+  file, commit, log or PR body.**
 - Read `BACKLOG.md`, then the idea file you intend to pick. Do not work from
   memory of a previous run; the repo is the truth.
 
