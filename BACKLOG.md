@@ -10,9 +10,9 @@ Statuses: `queued`, `in-pr`, `blocked-tests`, `blocked-needs-host`, `parked`, `s
 | 003 | routine-lint | 3 | queued | nothing | validate schedule tables for timezone and missing-field errors |
 | 004 | log-triage | 4 | queued | nothing | collapse a noisy log into its few recurring templates, ranked |
 | 005 | jsonl-profile | 5 | queued | nothing | derive a schema from a JSONL dump: keys, types, nulls, cardinality |
-| 006 | dockerfile-audit | 6 | queued | nothing | lint a Dockerfile for the flaws that show up in every scan |
-| 007 | sqlite-inspect | 7 | queued | nothing | describe an unknown SQLite database without writing to it |
-| 008 | secret-scan-lite | 8 | queued | nothing | find secret-shaped strings and never print the value |
+| 006 | dockerfile-audit | 6 | shipped | nothing | lint a Dockerfile for the flaws that show up in every scan |
+| 007 | sqlite-inspect | 7 | shipped | nothing | describe an unknown SQLite database without writing to it |
+| 008 | secret-scan-lite | 8 | in-pr | nothing | find secret-shaped strings and never print the value |
 | 009 | git-churn | 9 | queued | nothing | which files change most, and which change together |
 
 ## Adding an idea
