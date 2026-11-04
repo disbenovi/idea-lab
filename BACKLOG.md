@@ -6,7 +6,7 @@ Statuses: `queued`, `in-pr`, `blocked-tests`, `blocked-needs-host`, `parked`, `s
 | # | slug | priority | status | needs | one line |
 |---|---|---|---|---|---|
 | 001 | repo-brief | 1 | shipped | nothing | summarise any repo into a one-page brief from tree, sizes and README |
-| 002 | pr-digest | 2 | in-pr | nothing | turn a diff into a reviewer checklist with risk flags |
+| 002 | pr-digest | 2 | shipped | nothing | turn a diff into a reviewer checklist with risk flags |
 | 003 | routine-lint | 3 | queued | nothing | validate schedule tables for timezone and missing-field errors |
 | 004 | log-triage | 4 | queued | nothing | collapse a noisy log into its few recurring templates, ranked |
 | 005 | jsonl-profile | 5 | queued | nothing | derive a schema from a JSONL dump: keys, types, nulls, cardinality |

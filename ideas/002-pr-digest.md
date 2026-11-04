@@ -2,7 +2,7 @@
 id: "002"
 slug: pr-digest
 title: pr-digest — diff to reviewer checklist
-status: in-pr
+status: shipped
 priority: 2
 created: 2026-11-04
 language: python
