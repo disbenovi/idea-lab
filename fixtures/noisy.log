@@ -1,0 +1,7 @@
+2026-11-04T10:00:00Z INFO connected peer=192.0.2.10:5000 request=12345
+2026-11-04T10:00:01Z INFO connected peer=192.0.2.11:5001 request=12346
+2026-11-04T10:00:02Z WARN retry task=aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
+2026-11-04T10:00:03Z INFO connected peer=192.0.2.12:5002 request=12347
+2026-11-04T10:00:04Z ERROR disk unavailable
+2026-11-04T10:00:05Z WARN retry task=11111111-2222-3333-4444-555555555555
+2026-11-04T10:00:06Z INFO connected peer=192.0.2.13:5003 request=12348
