@@ -2,7 +2,7 @@
 id: "002"
 slug: pr-digest
 title: pr-digest — diff to reviewer checklist
-status: queued
+status: in-pr
 priority: 2
 created: 2026-11-04
 language: python
@@ -53,8 +53,20 @@ Fetching PRs from an API, posting comments, scoring with a model, HTML.
 
 ## Notes
 
+Built 2026-11-04. PR: (owner applies).
+Run `python3 -m unittest discover -s tests -v` for the regression suite.
+Stdlib-only text/JSON output; old/new line locations, redacted source excerpts,
+per-directory manifest/lock checks, and a finding-derived checklist.
+Scope: heuristic text scanning, not syntax/data-flow analysis. Shell calls and
+swallowed exceptions use at most four hunk lines; split SQL concatenation and
+aliases may be missed. Secret shapes mean hex >=32 or base64-like >=40 chars;
+false positives are intentionally redacted. Binary, rename-only and mode-only
+diffs are rejected, not silently surveyed. Git octal-escaped paths are not yet
+supported. Empty diffs have an empty checklist; nonempty ones have 3–7 items.
+Follow-up: syntax-aware multiline detection and metadata-only diff support.
+
 ## History
 
 | date | run | outcome |
 |---|---|---|
-| | | |
+| 2026-11-04 | 002 | Acceptance OK; regression suite passes; pending owner apply |
