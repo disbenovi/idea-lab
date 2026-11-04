@@ -4,7 +4,7 @@ slug: jsonl-profile
 title: jsonl-profile — derive a schema from a JSONL dump
 status: queued
 priority: 5
-created: 2026-11-06
+created: 2026-11-04
 language: python
 ---
 

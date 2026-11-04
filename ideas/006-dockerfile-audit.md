@@ -4,7 +4,7 @@ slug: dockerfile-audit
 title: dockerfile-audit — lint the flaws scanners report later
 status: queued
 priority: 6
-created: 2026-11-06
+created: 2026-11-04
 language: python
 ---
 

@@ -4,7 +4,7 @@ slug: git-churn
 title: git-churn — which files change most, and which change together
 status: queued
 priority: 9
-created: 2026-11-06
+created: 2026-11-04
 language: python
 ---
 

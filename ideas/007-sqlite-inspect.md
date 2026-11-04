@@ -4,7 +4,7 @@ slug: sqlite-inspect
 title: sqlite-inspect — describe an unknown database without touching it
 status: queued
 priority: 7
-created: 2026-11-06
+created: 2026-11-04
 language: python
 ---
 
