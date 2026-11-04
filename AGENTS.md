@@ -10,10 +10,19 @@ not for the largest change you can make.
   repositories on the same account are off limits — do not clone, list, read,
   fork or modify them, not even to look. If a task seems to need one, stop and
   report instead.
-- **This repository is public.** Clone it anonymously — no credential, no
-  account, no token: `git clone https://github.com/disbenovi/idea-lab`. If a
-  clone ever asks for a username or password, stop and report it; that means the
-  repository is not public and your run cannot proceed.
+- **You have no outbound network.** Every connection is refused, including
+  github.com and example.com. Do not attempt `git clone`, `fetch`, `push`,
+  `pip`, `npm install` or any API call: they cannot succeed, and a run that
+  spends its time retrying connections has failed. Local git still works —
+  `init`, `branch`, `commit`, `format-patch` — and that is all you need.
+- **You receive the repository as a pack.** The owner pastes or attaches this
+  repository's contents at a named commit, at the start of the run. That pack is
+  the entire world for the run. If a file you need is not in it, say which file
+  and stop; do not reconstruct it from memory or invent its contents. The
+  repository is public, but public does not help you: unreachable is
+  unreachable.
+- **Standard library only.** Nothing can be installed, so a dependency is not an
+  option, however small. Python stdlib, or Node built-ins if the idea says so.
 - **Where the work runs: your own cloud computer.** That is deliberate — you
   hold no git credential and must never acquire one, so this is the only place
   you build. Do not attach a computer for this.
@@ -27,7 +36,7 @@ not for the largest change you can make.
 - **Never ask the owner for a token, and never write one into a file, commit,
   log or PR body.** There is no credential path by design.
 - Read `BACKLOG.md`, then the idea file you intend to pick. Do not work from
-  memory of a previous run; the repo is the truth.
+  memory of a previous run; the pack you were given is the truth for that run.
 
 ## 1. Picking work
 
