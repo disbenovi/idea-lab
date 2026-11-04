@@ -30,7 +30,7 @@ command you ran, and its real output.
 
 ## Files in this run
 
-total bytes: 11942 across 5 files. Every block carries its
+total bytes: 11969 across 5 files. Every block carries its
 byte count and sha256 — write it verbatim, then check both. If the
 original ends with a newline the block keeps it; if it did not, the block
 adds one so the closing fence starts a line. Accept whichever candidate
@@ -43,7 +43,7 @@ guessing.
 | `BACKLOG.md` | 1689 | `df0a3c3358c10070af083bcea3fee24fa710db372698d0100a129e93c5acb677` |
 | `ideas/_template.md` | 909 | `0902946c35cb7c2956efb5b64564de0e68c0815fcd6e7f664dfd8a5cc190163b` |
 | `ideas/009-git-churn.md` | 2263 | `1ee899bf3d2a37400bb48ffcc378edc3d95018c6bc36428cc7faa541a2779c11` |
-| `delivery-log/2026-W45.md` | 1073 | `7c484e109ca239b01b731a90ee55d97edbc57bf3cfc0cb4afaa7d062a75bb399` |
+| `delivery-log/2026-W45.md` | 1100 | `56734328ddf0cc6b5b62a08b6eb62f020b9656e904d9a93211cb2e524776b520` |
 
 ## AGENTS.md
 
@@ -346,7 +346,7 @@ body, state the threshold choices and why they are defaults rather than truths.
 
 ## delivery-log/2026-W45.md
 
-bytes: 1073  sha256: 7c484e109ca239b01b731a90ee55d97edbc57bf3cfc0cb4afaa7d062a75bb399
+bytes: 1100  sha256: 56734328ddf0cc6b5b62a08b6eb62f020b9656e904d9a93211cb2e524776b520
 
 ```markdown
 001 — deterministic stdlib repository brief with regression tests — https://github.com/disbenovi/idea-lab/pull/1 — shipped
@@ -356,9 +356,9 @@ bytes: 1073  sha256: 7c484e109ca239b01b731a90ee55d97edbc57bf3cfc0cb4afaa7d062a75
 005 — jsonl-profile: bounded cardinality and two-level schema summaries with tests — https://github.com/disbenovi/idea-lab/pull/5 — shipped
 006 — dockerfile-audit: offline Dockerfile checks with fixtures and regression tests — https://github.com/disbenovi/idea-lab/pull/6 — shipped
 007 — sqlite-inspect: read-only metadata and counts with regression tests — https://github.com/disbenovi/idea-lab/pull/7 — shipped
-008 — secret-scan-lite: offline redacted shape findings with regression tests — pending owner apply — in-pr
+008 — secret-scan-lite: offline redacted shape findings with regression tests — https://github.com/disbenovi/idea-lab/pull/8 — shipped
 ```
 
 ---
 
-total bytes: 11942
+total bytes: 11969
