@@ -2,7 +2,7 @@
 id: "001"
 slug: repo-brief
 title: repo-brief — repo to one page
-status: in-pr
+status: shipped
 priority: 1
 created: 2026-11-04
 language: python
