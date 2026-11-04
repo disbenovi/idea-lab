@@ -2,7 +2,7 @@
 id: "004"
 slug: log-triage
 title: log-triage — collapse a noisy log into its recurring templates
-status: queued
+status: in-pr
 priority: 4
 created: 2026-11-04
 language: python
@@ -54,6 +54,13 @@ Live tailing, regex dialects, ML clustering, cross-file correlation, colour.
 
 ## Notes
 
+PR: (owner applies)
+
+Implemented 2026-11-04: stdlib CLI, fixture and regression tests.
+Timestamp bounds follow encounter order, not chronological min/max.
+Epoch heuristics use 10/13-digit numbers; long numbers use 5+ digits.
+See docs/log-triage.md for schema and limitations.
+
 Ranking by count is the point: the dominant template is usually the symptom and
 the rare one is usually the cause. Say that in the output header, one line.
 
@@ -61,4 +68,4 @@ the rare one is usually the cause. Say that in the output header, one line.
 
 | date | run | outcome |
 |---|---|---|
-| | | |
+| 2026-11-04 | 004 | in-pr; offline acceptance and regression tests pass |
