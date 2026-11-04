@@ -1,0 +1,19 @@
+# scratch work, never committed
+probe/
+tmp/
+*.log
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# node
+node_modules/
+
+# local secrets — never commit these, ever
+.env
+.env.*
+*.pem
+*.key
