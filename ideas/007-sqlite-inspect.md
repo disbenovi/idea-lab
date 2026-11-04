@@ -2,9 +2,11 @@
 id: "007"
 slug: sqlite-inspect
 title: sqlite-inspect — describe an unknown database without touching it
-status: queued
+status: in-pr
 priority: 7
 created: 2026-11-04
+updated: 2026-11-04
+PR: (owner applies)
 language: python
 ---
 
@@ -58,6 +60,12 @@ encrypted databases.
 
 ## Notes
 
+Implemented offline with stdlib Python; acceptance and seven regression tests pass.
+Requires SQLite 3.37+ and a checkpointed, offline snapshot. URI mode=ro with
+immutable=1 prevents sidecar writes; WAL/journal recovery state is refused.
+Virtual/shadow tables are listed but not queried. Follow-up: support live WAL
+databases only with an equally strict no-write guarantee.
+
 Read-only is the deliverable, not a nicety: this tool will be pointed at other
 people's data directories. Make the read-only assertion the first thing that can
 fail.
@@ -66,4 +74,4 @@ fail.
 
 | date | run | outcome |
 |---|---|---|
-| | | |
+| 2026-11-04 | 007 | in-pr; patch pending owner apply |
