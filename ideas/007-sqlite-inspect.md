@@ -2,7 +2,7 @@
 id: "007"
 slug: sqlite-inspect
 title: sqlite-inspect — describe an unknown database without touching it
-status: in-pr
+status: shipped
 priority: 7
 created: 2026-11-04
 updated: 2026-11-04
