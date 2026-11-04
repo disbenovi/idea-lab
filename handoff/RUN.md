@@ -21,7 +21,7 @@ before acting. Nothing else is needed.
 repo: disbenovi/idea-lab (public)
 branch: main
 base: the commit that contains this file
-generated: 2026-11-04 15:15 MST
+generated: 2026-11-04 15:20 MST
 queued: 003 routine-lint, 004 log-triage, 005 jsonl-profile, 006 dockerfile-audit, 007 sqlite-inspect, 008 secret-scan-lite, 009 git-churn
 delivery-log: delivery-log/2026-W45.md (included below — append to it, do not rewrite it)
 
@@ -30,7 +30,7 @@ command you ran, and its real output.
 
 ## Files in this run
 
-total bytes: 11579 across 5 files. Every block carries its
+total bytes: 11852 across 5 files. Every block carries its
 byte count and sha256 — write it verbatim, then check both. If the
 original ends with a newline the block keeps it; if it did not, the block
 adds one so the closing fence starts a line. Accept whichever candidate
@@ -42,8 +42,8 @@ guessing.
 | `AGENTS.md` | 6008 | `5195db002e16bc5902ffacca5e8b9f39f4d1b603d3d9783dd4056b3f2b8a6f28` |
 | `BACKLOG.md` | 1686 | `3764b2ca25a500474f714b12d8569929510495fbad5dce57ce5ea1d52dbf3854` |
 | `ideas/_template.md` | 909 | `0902946c35cb7c2956efb5b64564de0e68c0815fcd6e7f664dfd8a5cc190163b` |
-| `ideas/007-sqlite-inspect.md` | 2181 | `3817f5ca398a6393db5a696b96394efbe1f70c55b35f7649915c175afb859e00` |
-| `delivery-log/2026-W45.md` | 795 | `a76f51409908ac93c025bc7941aabcfeab05943af54335b30e8a4821c6216c56` |
+| `ideas/008-secret-scan-lite.md` | 2344 | `e9b3051d836c01f64b51e049b59c5908ba092ddcfccf1b1291d2a9bf53dd389f` |
+| `delivery-log/2026-W45.md` | 905 | `83cdef5d32b2f1778847e7378f718f94639903fe3c534d824275bf7834d43d0a` |
 
 ## AGENTS.md
 
@@ -270,74 +270,74 @@ Anything learned during a run goes here, including why a run failed.
 | | | |
 ````
 
-## ideas/007-sqlite-inspect.md
+## ideas/008-secret-scan-lite.md
 
-bytes: 2181  sha256: 3817f5ca398a6393db5a696b96394efbe1f70c55b35f7649915c175afb859e00
+bytes: 2344  sha256: e9b3051d836c01f64b51e049b59c5908ba092ddcfccf1b1291d2a9bf53dd389f
 
 ````markdown
 ---
-id: "007"
-slug: sqlite-inspect
-title: sqlite-inspect — describe an unknown database without touching it
+id: "008"
+slug: secret-scan-lite
+title: secret-scan-lite — find secret-shaped strings, never print them
 status: queued
-priority: 7
+priority: 8
 created: 2026-11-04
 language: python
 ---
 
-# sqlite-inspect
+# secret-scan-lite
 
 ## Problem
 
-An unfamiliar SQLite file — from an app's data directory, a backup, a snapshot —
-needs a dozen ad-hoc queries before you know what you are looking at: which
-tables matter, which are empty, what the indexes are, whether there are foreign
-keys, and whether a column named `email` holds something you should not print.
-Doing that by hand is slow and the first query is often the one that mutates.
+Before a repository goes public, or a directory gets pasted into a chat, there
+should be one cheap check for credentials. Most scanners solve it by printing
+the secret they found, which puts it in a terminal, a scrollback, a log and
+often a ticket — the finding becomes the leak. The tool has to be useful without
+ever echoing a value.
 
 ## Shape
 
-Single-file Python CLI, stdlib only. Opens the database read-only by URI
-(`file:{path}?mode=ro`) and refuses to proceed if the connection is not
-read-only.
+Single-file Python CLI, stdlib only. Walks a directory (default `.`).
 
-Report:
-
-- file size, page size, page count, journal mode, `user_version`
-- tables: name, row count, column names with declared types, `WITHOUT ROWID`
-- views, triggers, indexes (with the columns each covers), foreign keys
-- tables with no primary key — these break upserts
-- tables with zero rows — usually schema left behind by a removed feature
-- columns whose name matches a PII shape (`email`, `phone`, `address`, `name`,
-  `token`, `secret`, `password`, `ssn`, `dob`) — **names and counts only, never
-  values**
-- largest five tables by row count
-
-`--json`. No DDL, no `VACUUM`, no writes.
+- Skip `.git`, `node_modules`, `__pycache__`, binaries, and files over 1 MB.
+- Match shapes, each with a stable rule id:
+  - `SL001` AWS access key id (`AKIA` + 16 upper alnum)
+  - `SL002` GitHub token (`ghp_`, `gho_`, `ghs_`, `ghu_`, `github_pat_`)
+  - `SL003` OpenAI-style key (`sk-` + 20 or more)
+  - `SL004` private key header (`-----BEGIN ... PRIVATE KEY-----`)
+  - `SL005` JWT (three base64url segments)
+  - `SL006` Slack token (`xox[abpos]-`)
+  - `SL007` assignment to a key-shaped name (`password`, `secret`, `token`,
+    `api_key`, `apikey`) with a quoted value of 12+ chars
+- Output one line per finding: `path:line  RULE  shape`, where `shape` is the
+  first three and last two characters with the middle replaced by `…` and the
+  total length. **Never the value, in any mode, including `--json`.**
+- Exit 1 if anything is found, 0 if clean.
+- `--json`, `--allowlist FILE` (one path glob per line, for known-safe fixtures
+  and documentation examples).
 
 ## Acceptance check
 
 ```
-python3 sqlite_inspect.py --json fixtures/sample.db \
-  | python3 -c "import json,sys; d=json.load(sys.stdin); t={x['name']:x for x in d['tables']}; \
-assert t['users']['rows']==3; \
-assert t['empty_table']['rows']==0; \
-assert any(c['name']=='email' for c in t['users']['columns']); print('OK')"
+python3 secret_scan_lite.py --json fixtures/leaky/ > out.json; code=$?; \
+python3 -c "import json; d=json.load(open('out.json')); \
+assert len(d['findings'])==4, len(d['findings']); \
+assert not any('AKIAFAKE' in json.dumps(d) for _ in [0]); print('OK')"; \
+[ "$code" = "1" ] && echo EXIT1
 ```
 
-Plus a test asserting the file's sha256 is unchanged before and after a run, and
-that a table with no primary key is flagged.
+Plus a test asserting every planted value appears nowhere in stdout, and that a
+clean fixture exits 0 with an empty finding list.
 
 ## Out of scope
 
-Query execution, migrations, attaching other databases, `EXPLAIN` advice,
-encrypted databases.
+Entropy scoring, git history, remote scans, auto-rotation, anything that fixes
+what it finds.
 
 ## Notes
 
-Read-only is the deliverable, not a nicety: this tool will be pointed at other
-people's data directories. Make the read-only assertion the first thing that can
-fail.
+The redaction rule is the whole idea. If a test can be written that catches the
+tool printing a value, write it.
 
 ## History
 
@@ -348,7 +348,7 @@ fail.
 
 ## delivery-log/2026-W45.md
 
-bytes: 795  sha256: a76f51409908ac93c025bc7941aabcfeab05943af54335b30e8a4821c6216c56
+bytes: 905  sha256: 83cdef5d32b2f1778847e7378f718f94639903fe3c534d824275bf7834d43d0a
 
 ```markdown
 001 — deterministic stdlib repository brief with regression tests — https://github.com/disbenovi/idea-lab/pull/1 — shipped
@@ -357,8 +357,9 @@ bytes: 795  sha256: a76f51409908ac93c025bc7941aabcfeab05943af54335b30e8a4821c621
 004 — log-triage: deterministic offline template ranking with samples and tests — https://github.com/disbenovi/idea-lab/pull/4 — shipped
 005 — jsonl-profile: bounded cardinality and two-level schema summaries with tests — https://github.com/disbenovi/idea-lab/pull/5 — shipped
 006 — dockerfile-audit: offline Dockerfile checks with fixtures and regression tests — pending owner apply — in-pr
+007 — sqlite-inspect: read-only metadata and counts with regression tests — pending owner apply — in-pr
 ```
 
 ---
 
-total bytes: 11579
+total bytes: 11852
