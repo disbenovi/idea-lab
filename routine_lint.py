@@ -1,4 +1,4 @@
-"""Offline schedule linting. See routine-lint.md for the input contract."""
+"""Offline schedule linting. See docs/routine-lint.md for the input contract."""
 import argparse
 import json
 import re

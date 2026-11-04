@@ -69,9 +69,9 @@ The timezone conversion is the point. It is the check that was missed by hand.
 PR: (owner applies)
 
 2026-11-04: Added the stdlib CLI, Markdown/JSON fixtures, and regression tests.
-Verify: `python3 -m unittest -v test_routine_lint.py`, then the acceptance
+Verify: `python3 -m unittest -v tests.test_routine_lint`, then the acceptance
 commands above. UTC cron projections use only the next fire's offset; see
-`routine-lint.md` for DST behavior, input schema, and the eight-year bound.
+`docs/routine-lint.md` for DST behavior, input schema, and the eight-year bound.
 Event source connectivity is a caller-supplied offline inventory, not an API
 check. Follow-up: provider-verified connectivity requires a separately
 host-enabled run. No schedules or provider connections were created.

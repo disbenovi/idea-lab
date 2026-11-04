@@ -33,7 +33,7 @@ each locally asserted connected source. This is an offline inventory claim,
 not provider verification or monitoring; this tool cannot inspect APIs.
 An event has no predictable next fire. All rows still require a future end.
 
-Verification: `python3 -m unittest -v test_routine_lint.py`, then the two
+Verification: `python3 -m unittest -v tests.test_routine_lint`, then the two
 acceptance commands from the idea file. Good fixtures intentionally warn;
 warnings alone do not fail. Fixed 2099 end dates keep examples useful until
 then. To roll back, revert the implementation commit.
