@@ -2,9 +2,11 @@
 id: "009"
 slug: git-churn
 title: git-churn — which files change most, and which change together
-status: queued
+status: in-pr
 priority: 9
 created: 2026-11-04
+updated: 2026-11-04
+PR: (owner applies)
 language: python
 ---
 
@@ -64,4 +66,4 @@ body, state the threshold choices and why they are defaults rather than truths.
 
 | date | run | outcome |
 |---|---|---|
-| | | |
+| 2026-11-04 | offline RUN-009 | Built CLI, fixture tests and docs; acceptance OK; pending owner apply. |
