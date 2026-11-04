@@ -2,7 +2,7 @@
 id: "003"
 slug: routine-lint
 title: routine-lint — catch schedule mistakes before they fire
-status: in-pr
+status: shipped
 priority: 3
 created: 2026-11-04
 language: python

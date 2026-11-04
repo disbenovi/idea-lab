@@ -75,6 +75,7 @@ failure. State the exact command.
 If a test is genuinely impossible, that fact belongs in the PR body and in the
 idea file. "No tests" without a reason is a rejected PR.
 
+- **Placement:** the module at the repository root, tests in `tests/`, docs in `docs/`. A test file anywhere else is not discovered by `unittest discover -s tests`, so it can pass review while never running.
 ## 4. The PR
 
 Title: `idea: <slug> — <one line>`
