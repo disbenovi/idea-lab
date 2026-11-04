@@ -2,7 +2,7 @@
 id: "006"
 slug: dockerfile-audit
 title: dockerfile-audit — lint the flaws scanners report later
-status: queued
+status: in-pr
 priority: 6
 created: 2026-11-04
 language: python
@@ -64,8 +64,14 @@ A linter that cannot be fooled is better than one that catches everything: when
 parsing is ambiguous, prefer missing a finding over reporting a false one, and
 say so in the PR body.
 
+PR: (owner applies)
+
+Implemented 2026-11-04. Offline CLI, all ten checks, fixtures and regression tests.
+Follow-up: fuller shell grammar, heredocs, and build-argument resolution;
+ambiguous constructs are skipped rather than executed. See docs/dockerfile-audit.md.
+
 ## History
 
 | date | run | outcome |
 |---|---|---|
-| | | |
+| 2026-11-04 | 006 | in-pr; pending owner apply |
