@@ -21,8 +21,8 @@ before acting. Nothing else is needed.
 repo: disbenovi/idea-lab (public)
 branch: main
 base: the commit that contains this file
-generated: 2026-11-04 15:20 MST
-queued: 003 routine-lint, 004 log-triage, 005 jsonl-profile, 006 dockerfile-audit, 007 sqlite-inspect, 008 secret-scan-lite, 009 git-churn
+generated: 2026-11-04 15:28 MST
+queued: 003 routine-lint, 004 log-triage, 005 jsonl-profile, 009 git-churn
 delivery-log: delivery-log/2026-W45.md (included below — append to it, do not rewrite it)
 
 Deliver: the full `git format-patch <base>..HEAD` output, the acceptance
@@ -30,7 +30,7 @@ command you ran, and its real output.
 
 ## Files in this run
 
-total bytes: 11852 across 5 files. Every block carries its
+total bytes: 11942 across 5 files. Every block carries its
 byte count and sha256 — write it verbatim, then check both. If the
 original ends with a newline the block keeps it; if it did not, the block
 adds one so the closing fence starts a line. Accept whichever candidate
@@ -40,10 +40,10 @@ guessing.
 | path | bytes | sha256 |
 | --- | --- | --- |
 | `AGENTS.md` | 6008 | `5195db002e16bc5902ffacca5e8b9f39f4d1b603d3d9783dd4056b3f2b8a6f28` |
-| `BACKLOG.md` | 1686 | `3764b2ca25a500474f714b12d8569929510495fbad5dce57ce5ea1d52dbf3854` |
+| `BACKLOG.md` | 1689 | `df0a3c3358c10070af083bcea3fee24fa710db372698d0100a129e93c5acb677` |
 | `ideas/_template.md` | 909 | `0902946c35cb7c2956efb5b64564de0e68c0815fcd6e7f664dfd8a5cc190163b` |
-| `ideas/008-secret-scan-lite.md` | 2344 | `e9b3051d836c01f64b51e049b59c5908ba092ddcfccf1b1291d2a9bf53dd389f` |
-| `delivery-log/2026-W45.md` | 905 | `83cdef5d32b2f1778847e7378f718f94639903fe3c534d824275bf7834d43d0a` |
+| `ideas/009-git-churn.md` | 2263 | `1ee899bf3d2a37400bb48ffcc378edc3d95018c6bc36428cc7faa541a2779c11` |
+| `delivery-log/2026-W45.md` | 1073 | `7c484e109ca239b01b731a90ee55d97edbc57bf3cfc0cb4afaa7d062a75bb399` |
 
 ## AGENTS.md
 
@@ -184,7 +184,7 @@ the owner owes you. No preamble, no restating this contract.
 
 ## BACKLOG.md
 
-bytes: 1686  sha256: 3764b2ca25a500474f714b12d8569929510495fbad5dce57ce5ea1d52dbf3854
+bytes: 1689  sha256: df0a3c3358c10070af083bcea3fee24fa710db372698d0100a129e93c5acb677
 
 ```markdown
 # Backlog
@@ -199,9 +199,9 @@ Statuses: `queued`, `in-pr`, `blocked-tests`, `blocked-needs-host`, `parked`, `s
 | 003 | routine-lint | 3 | queued | nothing | validate schedule tables for timezone and missing-field errors |
 | 004 | log-triage | 4 | queued | nothing | collapse a noisy log into its few recurring templates, ranked |
 | 005 | jsonl-profile | 5 | queued | nothing | derive a schema from a JSONL dump: keys, types, nulls, cardinality |
-| 006 | dockerfile-audit | 6 | queued | nothing | lint a Dockerfile for the flaws that show up in every scan |
-| 007 | sqlite-inspect | 7 | queued | nothing | describe an unknown SQLite database without writing to it |
-| 008 | secret-scan-lite | 8 | queued | nothing | find secret-shaped strings and never print the value |
+| 006 | dockerfile-audit | 6 | shipped | nothing | lint a Dockerfile for the flaws that show up in every scan |
+| 007 | sqlite-inspect | 7 | shipped | nothing | describe an unknown SQLite database without writing to it |
+| 008 | secret-scan-lite | 8 | shipped | nothing | find secret-shaped strings and never print the value |
 | 009 | git-churn | 9 | queued | nothing | which files change most, and which change together |
 
 ## Adding an idea
@@ -270,74 +270,72 @@ Anything learned during a run goes here, including why a run failed.
 | | | |
 ````
 
-## ideas/008-secret-scan-lite.md
+## ideas/009-git-churn.md
 
-bytes: 2344  sha256: e9b3051d836c01f64b51e049b59c5908ba092ddcfccf1b1291d2a9bf53dd389f
+bytes: 2263  sha256: 1ee899bf3d2a37400bb48ffcc378edc3d95018c6bc36428cc7faa541a2779c11
 
 ````markdown
 ---
-id: "008"
-slug: secret-scan-lite
-title: secret-scan-lite — find secret-shaped strings, never print them
+id: "009"
+slug: git-churn
+title: git-churn — which files change most, and which change together
 status: queued
-priority: 8
+priority: 9
 created: 2026-11-04
 language: python
 ---
 
-# secret-scan-lite
+# git-churn
 
 ## Problem
 
-Before a repository goes public, or a directory gets pasted into a chat, there
-should be one cheap check for credentials. Most scanners solve it by printing
-the secret they found, which puts it in a terminal, a scrollback, a log and
-often a ticket — the finding becomes the leak. The tool has to be useful without
-ever echoing a value.
+In a repository with years of history, the files that matter are not the
+largest, they are the ones that keep changing. And the second-order fact is more
+useful still: which files change *together*, because that coupling is usually an
+undocumented dependency. Both are invisible in a file listing and tedious to
+extract by hand.
 
 ## Shape
 
-Single-file Python CLI, stdlib only. Walks a directory (default `.`).
+Single-file Python CLI, stdlib only, shelling out to `git` in the current
+repository (read-only commands only).
 
-- Skip `.git`, `node_modules`, `__pycache__`, binaries, and files over 1 MB.
-- Match shapes, each with a stable rule id:
-  - `SL001` AWS access key id (`AKIA` + 16 upper alnum)
-  - `SL002` GitHub token (`ghp_`, `gho_`, `ghs_`, `ghu_`, `github_pat_`)
-  - `SL003` OpenAI-style key (`sk-` + 20 or more)
-  - `SL004` private key header (`-----BEGIN ... PRIVATE KEY-----`)
-  - `SL005` JWT (three base64url segments)
-  - `SL006` Slack token (`xox[abpos]-`)
-  - `SL007` assignment to a key-shaped name (`password`, `secret`, `token`,
-    `api_key`, `apikey`) with a quoted value of 12+ chars
-- Output one line per finding: `path:line  RULE  shape`, where `shape` is the
-  first three and last two characters with the middle replaced by `…` and the
-  total length. **Never the value, in any mode, including `--json`.**
-- Exit 1 if anything is found, 0 if clean.
-- `--json`, `--allowlist FILE` (one path glob per line, for known-safe fixtures
-  and documentation examples).
+- Walk `git log --numstat --no-merges -n N` (default 200 commits).
+- Per file: commits touching it, distinct authors, added and removed lines,
+  churn = added + removed, last changed date.
+- Hotspots: files with the highest churn, and files changed in more than 60% of
+  the commits that touched their directory.
+- Coupling: pairs of files appearing in the same commit at least 5 times, with
+  `co-change ratio = together / min(commits_a, commits_b)`, only when the ratio
+  is at least 0.6. Report the top 10 pairs.
+- Skip lockfiles, generated directories, and any path matching `--exclude`
+  (comma-separated globs; defaults include `*.lock`, `dist/*`, `vendor/*`).
+- `--json`, `--since DATE` passed through to `git log`.
+
+Deterministic ordering: churn descending, then path.
 
 ## Acceptance check
 
 ```
-python3 secret_scan_lite.py --json fixtures/leaky/ > out.json; code=$?; \
-python3 -c "import json; d=json.load(open('out.json')); \
-assert len(d['findings'])==4, len(d['findings']); \
-assert not any('AKIAFAKE' in json.dumps(d) for _ in [0]); print('OK')"; \
-[ "$code" = "1" ] && echo EXIT1
+python3 git_churn.py --json | python3 -c "import json,sys; d=json.load(sys.stdin); \
+assert d['commits_analysed'] > 0; \
+assert d['hotspots'][0]['path']; \
+assert all(p['ratio'] >= 0.6 for p in d['pairs']); print('OK')"
 ```
 
-Plus a test asserting every planted value appears nowhere in stdout, and that a
-clean fixture exits 0 with an empty finding list.
+Plus a test that builds a throwaway repository with known commits in a temp
+directory, and asserts the top hotspot is the file changed in every one of them,
+and that a file touched once never appears in `pairs`.
 
 ## Out of scope
 
-Entropy scoring, git history, remote scans, auto-rotation, anything that fixes
-what it finds.
+Blame, authorship statistics, branch comparison, remote repositories, blame
+graphs, anything that writes to the repository.
 
 ## Notes
 
-The redaction rule is the whole idea. If a test can be written that catches the
-tool printing a value, write it.
+Coupling is the interesting output; churn alone is just a bigger `du`. In the PR
+body, state the threshold choices and why they are defaults rather than truths.
 
 ## History
 
@@ -348,7 +346,7 @@ tool printing a value, write it.
 
 ## delivery-log/2026-W45.md
 
-bytes: 905  sha256: 83cdef5d32b2f1778847e7378f718f94639903fe3c534d824275bf7834d43d0a
+bytes: 1073  sha256: 7c484e109ca239b01b731a90ee55d97edbc57bf3cfc0cb4afaa7d062a75bb399
 
 ```markdown
 001 — deterministic stdlib repository brief with regression tests — https://github.com/disbenovi/idea-lab/pull/1 — shipped
@@ -356,10 +354,11 @@ bytes: 905  sha256: 83cdef5d32b2f1778847e7378f718f94639903fe3c534d824275bf7834d4
 003 — routine-lint: offline schedule validation and local/UTC previews — https://github.com/disbenovi/idea-lab/pull/3 — shipped
 004 — log-triage: deterministic offline template ranking with samples and tests — https://github.com/disbenovi/idea-lab/pull/4 — shipped
 005 — jsonl-profile: bounded cardinality and two-level schema summaries with tests — https://github.com/disbenovi/idea-lab/pull/5 — shipped
-006 — dockerfile-audit: offline Dockerfile checks with fixtures and regression tests — pending owner apply — in-pr
-007 — sqlite-inspect: read-only metadata and counts with regression tests — pending owner apply — in-pr
+006 — dockerfile-audit: offline Dockerfile checks with fixtures and regression tests — https://github.com/disbenovi/idea-lab/pull/6 — shipped
+007 — sqlite-inspect: read-only metadata and counts with regression tests — https://github.com/disbenovi/idea-lab/pull/7 — shipped
+008 — secret-scan-lite: offline redacted shape findings with regression tests — pending owner apply — in-pr
 ```
 
 ---
 
-total bytes: 11852
+total bytes: 11942
