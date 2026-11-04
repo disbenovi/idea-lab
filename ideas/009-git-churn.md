@@ -2,7 +2,7 @@
 id: "009"
 slug: git-churn
 title: git-churn — which files change most, and which change together
-status: in-pr
+status: shipped
 priority: 9
 created: 2026-11-04
 updated: 2026-11-04

@@ -13,7 +13,7 @@ Statuses: `queued`, `in-pr`, `blocked-tests`, `blocked-needs-host`, `parked`, `s
 | 006 | dockerfile-audit | 6 | shipped | nothing | lint a Dockerfile for the flaws that show up in every scan |
 | 007 | sqlite-inspect | 7 | shipped | nothing | describe an unknown SQLite database without writing to it |
 | 008 | secret-scan-lite | 8 | shipped | nothing | find secret-shaped strings and never print the value |
-| 009 | git-churn | 9 | queued | nothing | which files change most, and which change together |
+| 009 | git-churn | 9 | shipped | nothing | which files change most, and which change together |
 
 ## Adding an idea
 
