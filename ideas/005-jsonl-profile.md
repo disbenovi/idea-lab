@@ -2,9 +2,10 @@
 id: "005"
 slug: jsonl-profile
 title: jsonl-profile — derive a schema from a JSONL dump
-status: queued
+status: in-pr
 priority: 5
 created: 2026-11-04
+updated: 2026-11-04
 language: python
 ---
 
@@ -62,8 +63,14 @@ Nested objects: report first-level keys only, and name the nested key as
 `parent.child` up to two levels, then stop. Depth without bound is how these
 tools become unusable.
 
+PR: (owner applies)
+
+Built offline from the verified RUN-005 snapshot. Acceptance prints `OK`;
+9 stdlib unittest cases pass. See `docs/jsonl-profile.md` for line-count,
+cardinality, escaped-path and floating-point semantics and scope limits.
+
 ## History
 
 | date | run | outcome |
 |---|---|---|
-| | | |
+| 2026-11-04 | 005 | in-pr; patch pending owner apply |
