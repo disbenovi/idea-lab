@@ -1,0 +1,25 @@
+diff --git a/app.py b/app.py
+--- a/app.py
++++ b/app.py
+@@ -1 +1,9 @@
+-old = 1
++import subprocess
++subprocess.run(command, shell=True)
++token = "FAKE0123456789abcdef0123456789abcdef0123456789abcdef"
++query = "SELECT * FROM users WHERE id=" + user_id
++eval(command)
++except:
++    pass
++# TODO review authentication
++pickle.loads(payload)
+diff --git a/tests/test_old.py b/tests/test_old.py
+--- a/tests/test_old.py
++++ /dev/null
+@@ -1 +0,0 @@
+-def test_old(): assert True
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -1 +1 @@
+-{}
++{"version": "2"}
