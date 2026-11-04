@@ -21,7 +21,7 @@ before acting. Nothing else is needed.
 repo: disbenovi/idea-lab (public)
 branch: main
 base: the commit that contains this file
-generated: 2026-11-04 15:07 MST
+generated: 2026-11-04 15:15 MST
 queued: 003 routine-lint, 004 log-triage, 005 jsonl-profile, 006 dockerfile-audit, 007 sqlite-inspect, 008 secret-scan-lite, 009 git-churn
 delivery-log: delivery-log/2026-W45.md (included below — append to it, do not rewrite it)
 
@@ -30,7 +30,7 @@ command you ran, and its real output.
 
 ## Files in this run
 
-total bytes: 11704 across 5 files. Every block carries its
+total bytes: 11579 across 5 files. Every block carries its
 byte count and sha256 — write it verbatim, then check both. If the
 original ends with a newline the block keeps it; if it did not, the block
 adds one so the closing fence starts a line. Accept whichever candidate
@@ -42,8 +42,8 @@ guessing.
 | `AGENTS.md` | 6008 | `5195db002e16bc5902ffacca5e8b9f39f4d1b603d3d9783dd4056b3f2b8a6f28` |
 | `BACKLOG.md` | 1686 | `3764b2ca25a500474f714b12d8569929510495fbad5dce57ce5ea1d52dbf3854` |
 | `ideas/_template.md` | 909 | `0902946c35cb7c2956efb5b64564de0e68c0815fcd6e7f664dfd8a5cc190163b` |
-| `ideas/006-dockerfile-audit.md` | 2427 | `9fc64251a63a64bc75cef192e4c500c3af2721cadd8bee0a12ee5059a974ad13` |
-| `delivery-log/2026-W45.md` | 674 | `bae411e8f3e27ebaca4185d1f8246702ab5e38a718cd834f124d8ab2befed090` |
+| `ideas/007-sqlite-inspect.md` | 2181 | `3817f5ca398a6393db5a696b96394efbe1f70c55b35f7649915c175afb859e00` |
+| `delivery-log/2026-W45.md` | 795 | `a76f51409908ac93c025bc7941aabcfeab05943af54335b30e8a4821c6216c56` |
 
 ## AGENTS.md
 
@@ -270,76 +270,74 @@ Anything learned during a run goes here, including why a run failed.
 | | | |
 ````
 
-## ideas/006-dockerfile-audit.md
+## ideas/007-sqlite-inspect.md
 
-bytes: 2427  sha256: 9fc64251a63a64bc75cef192e4c500c3af2721cadd8bee0a12ee5059a974ad13
+bytes: 2181  sha256: 3817f5ca398a6393db5a696b96394efbe1f70c55b35f7649915c175afb859e00
 
 ````markdown
 ---
-id: "006"
-slug: dockerfile-audit
-title: dockerfile-audit — lint the flaws scanners report later
+id: "007"
+slug: sqlite-inspect
+title: sqlite-inspect — describe an unknown database without touching it
 status: queued
-priority: 6
+priority: 7
 created: 2026-11-04
 language: python
 ---
 
-# dockerfile-audit
+# sqlite-inspect
 
 ## Problem
 
-The same Dockerfile mistakes recur across every stack: floating base tags, root
-user, apt caches left in the layer, `curl | sh`, secrets in `ARG`, and a cache
-busting `COPY . .` before dependencies install. A scanner reports them weeks
-later as image findings, long after the author has context. A ten-second check
-at review time is cheaper than a remediation batch.
+An unfamiliar SQLite file — from an app's data directory, a backup, a snapshot —
+needs a dozen ad-hoc queries before you know what you are looking at: which
+tables matter, which are empty, what the indexes are, whether there are foreign
+keys, and whether a column named `email` holds something you should not print.
+Doing that by hand is slow and the first query is often the one that mutates.
 
 ## Shape
 
-Single-file Python CLI, stdlib only. Reads a Dockerfile path (default
-`./Dockerfile`), handles multi-stage builds and line continuations.
+Single-file Python CLI, stdlib only. Opens the database read-only by URI
+(`file:{path}?mode=ro`) and refuses to proceed if the connection is not
+read-only.
 
-Rules, each with a stable id, severity, line number and one line of why:
+Report:
 
-- `DF001` high — `FROM` with no tag, or tag `latest`
-- `DF002` high — final stage has no `USER`, or `USER root`
-- `DF003` medium — `apt-get install` without `--no-install-recommends`
-- `DF004` medium — `apt-get install` without cleanup of
-  `/var/lib/apt/lists` in the same `RUN`
-- `DF005` high — `curl` or `wget` piped into a shell
-- `DF006` medium — `ADD` used for a local path where `COPY` would do
-- `DF007` high — `ARG` or `ENV` whose name looks like a secret; report the name
-  only, never the value
-- `DF008` medium — `COPY . .` (or `COPY . `) before a dependency-install step
-- `DF009` low — no `HEALTHCHECK` anywhere
-- `DF010` low — `RUN` with `sudo`
+- file size, page size, page count, journal mode, `user_version`
+- tables: name, row count, column names with declared types, `WITHOUT ROWID`
+- views, triggers, indexes (with the columns each covers), foreign keys
+- tables with no primary key — these break upserts
+- tables with zero rows — usually schema left behind by a removed feature
+- columns whose name matches a PII shape (`email`, `phone`, `address`, `name`,
+  `token`, `secret`, `password`, `ssn`, `dob`) — **names and counts only, never
+  values**
+- largest five tables by row count
 
-Exit 1 if any high finding, else 0. `--json` gives `{findings:[{rule,severity,
-line,message}], counts:{high,medium,low}}`.
+`--json`. No DDL, no `VACUUM`, no writes.
 
 ## Acceptance check
 
 ```
-python3 dockerfile_audit.py --json fixtures/bad.Dockerfile \
-  | python3 -c "import json,sys; d=json.load(sys.stdin); r={f['rule'] for f in d['findings']}; \
-assert {'DF001','DF002','DF005','DF007'} <= r, r; print('OK')"
+python3 sqlite_inspect.py --json fixtures/sample.db \
+  | python3 -c "import json,sys; d=json.load(sys.stdin); t={x['name']:x for x in d['tables']}; \
+assert t['users']['rows']==3; \
+assert t['empty_table']['rows']==0; \
+assert any(c['name']=='email' for c in t['users']['columns']); print('OK')"
 ```
 
-Plus a test that `fixtures/good.Dockerfile` produces zero findings and exit 0,
-and that a continuation line (`RUN apt-get update \\` newline ` && apt-get
-install`) is parsed as one instruction.
+Plus a test asserting the file's sha256 is unchanged before and after a run, and
+that a table with no primary key is flagged.
 
 ## Out of scope
 
-Building the image, querying a registry, parsing `.dockerignore` contents, SBOM,
-severity scoring against CVEs.
+Query execution, migrations, attaching other databases, `EXPLAIN` advice,
+encrypted databases.
 
 ## Notes
 
-A linter that cannot be fooled is better than one that catches everything: when
-parsing is ambiguous, prefer missing a finding over reporting a false one, and
-say so in the PR body.
+Read-only is the deliverable, not a nicety: this tool will be pointed at other
+people's data directories. Make the read-only assertion the first thing that can
+fail.
 
 ## History
 
@@ -350,7 +348,7 @@ say so in the PR body.
 
 ## delivery-log/2026-W45.md
 
-bytes: 674  sha256: bae411e8f3e27ebaca4185d1f8246702ab5e38a718cd834f124d8ab2befed090
+bytes: 795  sha256: a76f51409908ac93c025bc7941aabcfeab05943af54335b30e8a4821c6216c56
 
 ```markdown
 001 — deterministic stdlib repository brief with regression tests — https://github.com/disbenovi/idea-lab/pull/1 — shipped
@@ -358,8 +356,9 @@ bytes: 674  sha256: bae411e8f3e27ebaca4185d1f8246702ab5e38a718cd834f124d8ab2befe
 003 — routine-lint: offline schedule validation and local/UTC previews — https://github.com/disbenovi/idea-lab/pull/3 — shipped
 004 — log-triage: deterministic offline template ranking with samples and tests — https://github.com/disbenovi/idea-lab/pull/4 — shipped
 005 — jsonl-profile: bounded cardinality and two-level schema summaries with tests — https://github.com/disbenovi/idea-lab/pull/5 — shipped
+006 — dockerfile-audit: offline Dockerfile checks with fixtures and regression tests — pending owner apply — in-pr
 ```
 
 ---
 
-total bytes: 11704
+total bytes: 11579
