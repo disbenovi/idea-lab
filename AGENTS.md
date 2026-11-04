@@ -10,17 +10,22 @@ not for the largest change you can make.
   repositories on the same account are off limits — do not clone, list, read,
   fork or modify them, not even to look. If a task seems to need one, stop and
   report instead.
-- **Where the work runs: a Codex cloud environment for this repository, or a
-  connected computer the owner has authorised for this task. Never your own
-  cloud computer.** Your own machine is read-only for this repository — it holds
-  no git credential, and the GitHub plugin cannot push by design — so trying to
-  build there wastes the run. If no execution environment is available, say so
-  and stop.
+- **This repository is public.** Clone it anonymously — no credential, no
+  account, no token: `git clone https://github.com/disbenovi/idea-lab`. If a
+  clone ever asks for a username or password, stop and report it; that means the
+  repository is not public and your run cannot proceed.
+- **Where the work runs: your own cloud computer.** That is deliberate — you
+  hold no git credential and must never acquire one, so this is the only place
+  you build. Do not attach a computer for this.
+- **You do not push. You hand over a patch.** When the work is done and the
+  acceptance check passes, produce `git format-patch main..HEAD` output and
+  report it. The owner applies it and opens the pull request. This is not a
+  restriction to work around — a run that tries to push, or that asks for a
+  credential, has failed the run.
 - The GitHub plugin is for reading, searching and understanding code. It does not
   push, and it is not an execution environment.
-- If you cannot reach the execution environment, say exactly which access is
-  missing. **Never ask the owner for a token in chat, and never write one into a
-  file, commit, log or PR body.**
+- **Never ask the owner for a token, and never write one into a file, commit,
+  log or PR body.** There is no credential path by design.
 - Read `BACKLOG.md`, then the idea file you intend to pick. Do not work from
   memory of a previous run; the repo is the truth.
 
@@ -87,11 +92,14 @@ what could break, and how to revert
 
 ## 5. Records, always
 
-- Update the idea file: `status: in-pr`, add the PR link and the date.
+- Update the idea file: `status: in-pr`, and add the date. The PR link is filled
+  in by the owner after applying the patch — leave the field as
+  `PR: (owner applies)`.
 - Append exactly one line to `delivery-log/<YYYY-Www>.md`:
-  `<idea id> — <one line> — <PR link> — <status>`
+  `<idea id> — <one line> — pending owner apply — in-pr`
 
-An idea that shipped without a log line did not happen.
+Both go in the patch, so they land in the same commit as the work. An idea that
+shipped without a log line did not happen.
 
 ## 6. Stop conditions
 
@@ -105,5 +113,6 @@ Stop, leave the branch in place, and report — do not thrash:
 
 ## 7. Report
 
-Ten lines maximum: idea id, branch, PR link, tests, what is next, the one
-decision the owner owes you. No preamble, no restating this contract.
+Ten lines maximum: idea id, branch, **the patch** (or where to download it),
+the exact acceptance command and its real output, what is next, the one decision
+the owner owes you. No preamble, no restating this contract.
