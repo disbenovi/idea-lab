@@ -2,7 +2,7 @@
 id: "008"
 slug: secret-scan-lite
 title: secret-scan-lite — find secret-shaped strings, never print them
-status: queued
+status: in-pr
 priority: 8
 created: 2026-11-04
 language: python
@@ -66,4 +66,9 @@ tool printing a value, write it.
 
 | date | run | outcome |
 |---|---|---|
-| | | |
+| 2026-11-04 | 008 | Built and verified offline; pending owner apply. |
+
+PR: (owner applies)
+
+Implemented all seven rules, redacted text/JSON, bounded UTF-8 scanning and
+allowlists. Heuristic thresholds and limitations are in docs/secret-scan-lite.md.

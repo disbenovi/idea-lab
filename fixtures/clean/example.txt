@@ -1,0 +1,2 @@
+No credentials here. These are ordinary words and short examples.
+password = "short"
