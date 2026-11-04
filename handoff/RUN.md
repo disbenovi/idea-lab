@@ -23,13 +23,14 @@ branch: main
 base: the commit that contains this file
 generated: 2026-11-04 14:36 MST
 queued: 003 routine-lint, 004 log-triage, 005 jsonl-profile, 006 dockerfile-audit, 007 sqlite-inspect, 008 secret-scan-lite, 009 git-churn
+delivery-log: delivery-log/2026-W45.md (included below — append to it, do not rewrite it)
 
 Deliver: the full `git format-patch <base>..HEAD` output, the acceptance
 command you ran, and its real output.
 
 ## Files in this run
 
-total bytes: 10646 across 4 files. Every block carries its
+total bytes: 10897 across 5 files. Every block carries its
 byte count and sha256 — write it verbatim, then check both. If the
 original ends with a newline the block keeps it; if it did not, the block
 adds one so the closing fence starts a line. Accept whichever candidate
@@ -42,6 +43,7 @@ guessing.
 | `BACKLOG.md` | 1686 | `3764b2ca25a500474f714b12d8569929510495fbad5dce57ce5ea1d52dbf3854` |
 | `ideas/_template.md` | 909 | `0902946c35cb7c2956efb5b64564de0e68c0815fcd6e7f664dfd8a5cc190163b` |
 | `ideas/003-routine-lint.md` | 2251 | `e31b91a81eb5f405eecbe2e3ed29d97ce5c7c1ab017f857aacc66504fa88e2b8` |
+| `delivery-log/2026-W45.md` | 251 | `c1c20c42b56ab959aa21c23d1d3e934b191f2400c4299bf1db9b605258aa86f0` |
 
 ## AGENTS.md
 
@@ -347,6 +349,15 @@ The timezone conversion is the point. It is the check that was missed by hand.
 | | | |
 ````
 
+## delivery-log/2026-W45.md
+
+bytes: 251  sha256: c1c20c42b56ab959aa21c23d1d3e934b191f2400c4299bf1db9b605258aa86f0
+
+```markdown
+001 — deterministic stdlib repository brief with regression tests — https://github.com/disbenovi/idea-lab/pull/1 — shipped
+002 — pr-digest: offline diff risks and reviewer checklist — https://github.com/disbenovi/idea-lab/pull/2 — shipped
+```
+
 ---
 
-total bytes: 10646
+total bytes: 10897
