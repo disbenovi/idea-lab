@@ -2,7 +2,7 @@
 id: "001"
 slug: repo-brief
 title: repo-brief — repo to one page
-status: queued
+status: in-pr
 priority: 1
 created: 2026-11-04
 language: python
@@ -46,8 +46,28 @@ needs `pip install`, HTML output.
 
 ## Notes
 
+Date: 2026-11-04
+PR: (owner applies)
+
+Implemented as `repo_brief.py`; run `python3 repo_brief.py PATH` or add `--json`.
+Tests: `python3 -B -m unittest discover -s tests -v` (6 regression tests).
+Both output modes carry the same fields. Language ranking is file count, then
+bytes, then name; unknown extensions are `Other`. Paths are relative and sorted.
+No network, dependency installation, or repository writes are required.
+
+Scope cuts: entry points and frameworks are filename/config heuristics, not code
+execution or import analysis. Test counts exclude Python package/config helpers.
+Git metadata, common dependency/cache dirs, symlinks and common secret filenames
+are skipped. This is not a secret detector. Only root README, package.json and
+Makefile contents are read, capped at 65,536 characters each with warnings.
+README parsing supports simple Markdown/setext headings and plain paragraphs,
+not full Markdown rendering. Makefile targets are static, not expanded.
+Follow-ups: richer framework detection and Markdown parsing if needed.
+BACKLOG.md is unchanged under the explicit file allowlist; the owner can reconcile
+its queued row when applying the patch.
+
 ## History
 
 | date | run | outcome |
 |---|---|---|
-| | | |
+| 2026-11-04 | 1 | Local patch prepared; tests pass; pending owner apply. |
