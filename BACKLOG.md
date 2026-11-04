@@ -12,7 +12,7 @@ Statuses: `queued`, `in-pr`, `blocked-tests`, `blocked-needs-host`, `parked`, `s
 | 005 | jsonl-profile | 5 | queued | nothing | derive a schema from a JSONL dump: keys, types, nulls, cardinality |
 | 006 | dockerfile-audit | 6 | shipped | nothing | lint a Dockerfile for the flaws that show up in every scan |
 | 007 | sqlite-inspect | 7 | shipped | nothing | describe an unknown SQLite database without writing to it |
-| 008 | secret-scan-lite | 8 | in-pr | nothing | find secret-shaped strings and never print the value |
+| 008 | secret-scan-lite | 8 | shipped | nothing | find secret-shaped strings and never print the value |
 | 009 | git-churn | 9 | queued | nothing | which files change most, and which change together |
 
 ## Adding an idea

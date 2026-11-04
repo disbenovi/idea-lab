@@ -2,7 +2,7 @@
 id: "008"
 slug: secret-scan-lite
 title: secret-scan-lite — find secret-shaped strings, never print them
-status: in-pr
+status: shipped
 priority: 8
 created: 2026-11-04
 language: python
