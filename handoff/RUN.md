@@ -21,7 +21,7 @@ before acting. Nothing else is needed.
 repo: disbenovi/idea-lab (public)
 branch: main
 base: the commit that contains this file
-generated: 2026-11-04 14:36 MST
+generated: 2026-11-04 14:54 MST
 queued: 003 routine-lint, 004 log-triage, 005 jsonl-profile, 006 dockerfile-audit, 007 sqlite-inspect, 008 secret-scan-lite, 009 git-churn
 delivery-log: delivery-log/2026-W45.md (included below — append to it, do not rewrite it)
 
@@ -30,7 +30,7 @@ command you ran, and its real output.
 
 ## Files in this run
 
-total bytes: 10897 across 5 files. Every block carries its
+total bytes: 11065 across 5 files. Every block carries its
 byte count and sha256 — write it verbatim, then check both. If the
 original ends with a newline the block keeps it; if it did not, the block
 adds one so the closing fence starts a line. Accept whichever candidate
@@ -39,15 +39,15 @@ guessing.
 
 | path | bytes | sha256 |
 | --- | --- | --- |
-| `AGENTS.md` | 5800 | `3c99fc2dfd46f0175123c0699a00442a36625259d9099333865a543216cf6a80` |
+| `AGENTS.md` | 6008 | `5195db002e16bc5902ffacca5e8b9f39f4d1b603d3d9783dd4056b3f2b8a6f28` |
 | `BACKLOG.md` | 1686 | `3764b2ca25a500474f714b12d8569929510495fbad5dce57ce5ea1d52dbf3854` |
 | `ideas/_template.md` | 909 | `0902946c35cb7c2956efb5b64564de0e68c0815fcd6e7f664dfd8a5cc190163b` |
-| `ideas/003-routine-lint.md` | 2251 | `e31b91a81eb5f405eecbe2e3ed29d97ce5c7c1ab017f857aacc66504fa88e2b8` |
-| `delivery-log/2026-W45.md` | 251 | `c1c20c42b56ab959aa21c23d1d3e934b191f2400c4299bf1db9b605258aa86f0` |
+| `ideas/004-log-triage.md` | 2077 | `3ad24d76515f6b61e57ec21f3f43d02b79cad025197300dd678ef11294b24eac` |
+| `delivery-log/2026-W45.md` | 385 | `cb4598c1de36deb22ea44e208a69c5301d3b59e7ac2cd9d8b6d6528b28b1d265` |
 
 ## AGENTS.md
 
-bytes: 5800  sha256: 3c99fc2dfd46f0175123c0699a00442a36625259d9099333865a543216cf6a80
+bytes: 6008  sha256: 5195db002e16bc5902ffacca5e8b9f39f4d1b603d3d9783dd4056b3f2b8a6f28
 
 ````markdown
 # Agent contract — read fully before acting
@@ -127,6 +127,7 @@ failure. State the exact command.
 If a test is genuinely impossible, that fact belongs in the PR body and in the
 idea file. "No tests" without a reason is a rejected PR.
 
+- **Placement:** the module at the repository root, tests in `tests/`, docs in `docs/`. A test file anywhere else is not discovered by `unittest discover -s tests`, so it can pass review while never running.
 ## 4. The PR
 
 Title: `idea: <slug> — <one line>`
@@ -269,78 +270,69 @@ Anything learned during a run goes here, including why a run failed.
 | | | |
 ````
 
-## ideas/003-routine-lint.md
+## ideas/004-log-triage.md
 
-bytes: 2251  sha256: e31b91a81eb5f405eecbe2e3ed29d97ce5c7c1ab017f857aacc66504fa88e2b8
+bytes: 2077  sha256: 3ad24d76515f6b61e57ec21f3f43d02b79cad025197300dd678ef11294b24eac
 
 ````markdown
 ---
-id: "003"
-slug: routine-lint
-title: routine-lint — catch schedule mistakes before they fire
+id: "004"
+slug: log-triage
+title: log-triage — collapse a noisy log into its recurring templates
 status: queued
-priority: 3
+priority: 4
 created: 2026-11-04
 language: python
 ---
 
-# routine-lint
+# log-triage
 
 ## Problem
 
-A scheduled task that is wrong is worse than one that does not exist, because it
-looks fine until it silently never runs. The failure modes repeat: cron in the
-wrong timezone, a time already in the past, a missing delivery destination, a
-missing end date, an event routine with no event source. All of them are
-mechanically detectable.
+A log with ten thousand lines usually contains six distinct things, one of them
+repeated nine thousand times. Reading top to bottom spends attention on
+repetition and misses the rare line that explains the incident. The shape of the
+log — how many distinct behaviours, which is dominant, what appeared first and
+last — is what an operator wants before reading any single line.
 
 ## Shape
 
-Single-file Python CLI, stdlib only. Input: a JSON or YAML-free markdown table
-matching the routine shape used by the owner:
+Single-file Python CLI, stdlib only. Reads one file or stdin.
 
-```
-name | schedule | cron | timezone | end_date | notify | deliver
-```
+- Normalise each line into a template by replacing the variable parts with
+  placeholders: ISO timestamps, epoch numbers, UUIDs, hex ids of 8+ chars, IPv4
+  with optional port, long numbers, quoted strings over 40 chars.
+- Group identical templates, count them, keep the first and last raw line seen
+  for each, and one sample at full length.
+- Print ranked by count descending, ties broken by template text so output is
+  stable and diffable.
+- `--top N` (default 20), `--json`, `--samples N` (raw examples per template,
+  default 1).
+- If lines carry ISO-8601 timestamps, report per-template first and last
+  timestamp; skip quietly when they do not.
 
-Checks, each producing file/row + reason:
-
-- `cron` has 5 fields, each in range; wildcards and lists accepted
-- `timezone` is an IANA name, or the row is rejected for ambiguous offset
-- the UTC equivalent is computed and printed next to the local equivalent, so a
-  human can see the conversion rather than trust it
-- the next fire time is in the future; a one-time schedule in the past is an error
-- `end_date` present and in the future
-- `deliver` non-empty
-- `notify` present; warns when `notify` means "only on change" without a
-  separate liveness signal, because silence then cannot be distinguished from
-  failure
-- event routines: no `cron`, and `trigger` names a source that is actually
-  connected — otherwise error, since connecting alone creates no monitoring
-
-Output: table of rows, then errors, then warnings, then exit 1 if any error.
-`--json` for the same.
+Deterministic: the same input produces byte-identical output.
 
 ## Acceptance check
 
 ```
-$ python3 routine_lint.py fixtures/bad.md; echo "exit=$?"
-exit=1
-$ python3 routine_lint.py fixtures/good.md; echo "exit=$?"
-exit=0
+python3 log_triage.py --json fixtures/noisy.log \
+  | python3 -c "import json,sys; d=json.load(sys.stdin); \
+assert len(d['templates'])==3, len(d['templates']); \
+assert d['templates'][0]['count']==4; print('OK')"
 ```
 
-Fixtures must include: a 4-field cron (reject), a timezone-abbreviation
-`PST` (reject), a past one-time schedule (reject), a silent-notification row
-(warn), and a row whose `0 16 * * 5` converts to `0 0 * * 6` UTC (must print both).
+Plus a test asserting that two runs on the same fixture are byte-identical, and
+that a log with no repeated lines keeps every line distinct.
 
 ## Out of scope
 
-Actually creating schedules, reading any provider API, YAML dependency.
+Live tailing, regex dialects, ML clustering, cross-file correlation, colour.
 
 ## Notes
 
-The timezone conversion is the point. It is the check that was missed by hand.
+Ranking by count is the point: the dominant template is usually the symptom and
+the rare one is usually the cause. Say that in the output header, one line.
 
 ## History
 
@@ -351,13 +343,14 @@ The timezone conversion is the point. It is the check that was missed by hand.
 
 ## delivery-log/2026-W45.md
 
-bytes: 251  sha256: c1c20c42b56ab959aa21c23d1d3e934b191f2400c4299bf1db9b605258aa86f0
+bytes: 385  sha256: cb4598c1de36deb22ea44e208a69c5301d3b59e7ac2cd9d8b6d6528b28b1d265
 
 ```markdown
 001 — deterministic stdlib repository brief with regression tests — https://github.com/disbenovi/idea-lab/pull/1 — shipped
 002 — pr-digest: offline diff risks and reviewer checklist — https://github.com/disbenovi/idea-lab/pull/2 — shipped
+003 — routine-lint: offline schedule validation and local/UTC previews — https://github.com/disbenovi/idea-lab/pull/3 — shipped
 ```
 
 ---
 
-total bytes: 10897
+total bytes: 11065
