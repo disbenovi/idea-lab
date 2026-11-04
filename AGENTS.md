@@ -15,12 +15,13 @@ not for the largest change you can make.
   `pip`, `npm install` or any API call: they cannot succeed, and a run that
   spends its time retrying connections has failed. Local git still works —
   `init`, `branch`, `commit`, `format-patch` — and that is all you need.
-- **You receive the repository as a pack.** The owner pastes or attaches this
-  repository's contents at a named commit, at the start of the run. That pack is
-  the entire world for the run. If a file you need is not in it, say which file
-  and stop; do not reconstruct it from memory or invent its contents. The
-  repository is public, but public does not help you: unreachable is
-  unreachable.
+- **You receive a run file, not a repository.** At the start of the run you are
+  given `handoff/RUN.md` — read by path, or attached — which holds this
+  contract, the backlog and the idea files, each with its byte count and sha256.
+  Reconstruct only what you need and check it against those hashes. If a file
+  you need is not in it, say which file and stop; do not reconstruct it from
+  memory or invent its contents. An older workflow pasted the entire repository
+  as a pack; that is retired.
 - **Standard library only.** Nothing can be installed, so a dependency is not an
   option, however small. Python stdlib, or Node built-ins if the idea says so.
 - **Where the work runs: your own cloud computer.** That is deliberate — you
@@ -36,7 +37,8 @@ not for the largest change you can make.
 - **Never ask the owner for a token, and never write one into a file, commit,
   log or PR body.** There is no credential path by design.
 - Read `BACKLOG.md`, then the idea file you intend to pick. Do not work from
-  memory of a previous run; the pack you were given is the truth for that run.
+  memory of a previous run; the run file you were given is the truth for that
+  run.
 
 ## 1. Picking work
 
