@@ -1,0 +1,4 @@
+[
+  {"name": "mail event", "schedule": "event", "timezone": "UTC", "end_date": "2099-12-31", "notify": "on-change", "deliver": "console", "liveness": "daily heartbeat", "trigger": "mail"},
+  {"name": "one time", "schedule": "once", "at": "2099-01-01T09:00:00Z", "timezone": "UTC", "end_date": "2099-12-31", "notify": "always", "deliver": "console"}
+]
