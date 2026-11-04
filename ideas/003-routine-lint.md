@@ -2,7 +2,7 @@
 id: "003"
 slug: routine-lint
 title: routine-lint — catch schedule mistakes before they fire
-status: queued
+status: in-pr
 priority: 3
 created: 2026-11-04
 language: python
@@ -66,8 +66,18 @@ Actually creating schedules, reading any provider API, YAML dependency.
 
 The timezone conversion is the point. It is the check that was missed by hand.
 
+PR: (owner applies)
+
+2026-11-04: Added the stdlib CLI, Markdown/JSON fixtures, and regression tests.
+Verify: `python3 -m unittest -v test_routine_lint.py`, then the acceptance
+commands above. UTC cron projections use only the next fire's offset; see
+`routine-lint.md` for DST behavior, input schema, and the eight-year bound.
+Event source connectivity is a caller-supplied offline inventory, not an API
+check. Follow-up: provider-verified connectivity requires a separately
+host-enabled run. No schedules or provider connections were created.
+
 ## History
 
 | date | run | outcome |
 |---|---|---|
-| | | |
+| 2026-11-04 | 003 | in-pr; acceptance passes, pending owner apply |
