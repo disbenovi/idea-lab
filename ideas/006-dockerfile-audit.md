@@ -2,7 +2,7 @@
 id: "006"
 slug: dockerfile-audit
 title: dockerfile-audit — lint the flaws scanners report later
-status: in-pr
+status: shipped
 priority: 6
 created: 2026-11-04
 language: python
