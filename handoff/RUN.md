@@ -21,7 +21,7 @@ before acting. Nothing else is needed.
 repo: disbenovi/idea-lab (public)
 branch: main
 base: the commit that contains this file
-generated: 2026-11-04 14:54 MST
+generated: 2026-11-04 15:01 MST
 queued: 003 routine-lint, 004 log-triage, 005 jsonl-profile, 006 dockerfile-audit, 007 sqlite-inspect, 008 secret-scan-lite, 009 git-churn
 delivery-log: delivery-log/2026-W45.md (included below — append to it, do not rewrite it)
 
@@ -30,7 +30,7 @@ command you ran, and its real output.
 
 ## Files in this run
 
-total bytes: 11065 across 5 files. Every block carries its
+total bytes: 11299 across 5 files. Every block carries its
 byte count and sha256 — write it verbatim, then check both. If the
 original ends with a newline the block keeps it; if it did not, the block
 adds one so the closing fence starts a line. Accept whichever candidate
@@ -42,8 +42,8 @@ guessing.
 | `AGENTS.md` | 6008 | `5195db002e16bc5902ffacca5e8b9f39f4d1b603d3d9783dd4056b3f2b8a6f28` |
 | `BACKLOG.md` | 1686 | `3764b2ca25a500474f714b12d8569929510495fbad5dce57ce5ea1d52dbf3854` |
 | `ideas/_template.md` | 909 | `0902946c35cb7c2956efb5b64564de0e68c0815fcd6e7f664dfd8a5cc190163b` |
-| `ideas/004-log-triage.md` | 2077 | `3ad24d76515f6b61e57ec21f3f43d02b79cad025197300dd678ef11294b24eac` |
-| `delivery-log/2026-W45.md` | 385 | `cb4598c1de36deb22ea44e208a69c5301d3b59e7ac2cd9d8b6d6528b28b1d265` |
+| `ideas/005-jsonl-profile.md` | 2168 | `0b153c3dfa885f527796c0d92f5491b8df1f5097cc032f71034f0e79d7e1c085` |
+| `delivery-log/2026-W45.md` | 528 | `2bf700962159d4d7bc73cafb6c498d0519e3511765b86a1ffcc368f897501617` |
 
 ## AGENTS.md
 
@@ -270,69 +270,74 @@ Anything learned during a run goes here, including why a run failed.
 | | | |
 ````
 
-## ideas/004-log-triage.md
+## ideas/005-jsonl-profile.md
 
-bytes: 2077  sha256: 3ad24d76515f6b61e57ec21f3f43d02b79cad025197300dd678ef11294b24eac
+bytes: 2168  sha256: 0b153c3dfa885f527796c0d92f5491b8df1f5097cc032f71034f0e79d7e1c085
 
 ````markdown
 ---
-id: "004"
-slug: log-triage
-title: log-triage — collapse a noisy log into its recurring templates
+id: "005"
+slug: jsonl-profile
+title: jsonl-profile — derive a schema from a JSONL dump
 status: queued
-priority: 4
+priority: 5
 created: 2026-11-04
 language: python
 ---
 
-# log-triage
+# jsonl-profile
 
 ## Problem
 
-A log with ten thousand lines usually contains six distinct things, one of them
-repeated nine thousand times. Reading top to bottom spends attention on
-repetition and misses the rare line that explains the incident. The shape of the
-log — how many distinct behaviours, which is dominant, what appeared first and
-last — is what an operator wants before reading any single line.
+An event dump arrives as JSON Lines with no schema and no docs. Before querying
+it you need to know which keys exist, how often they are missing, whether a key
+is always null, which keys are identifiers with tens of thousands of distinct
+values, and which are small enumerations worth grouping by. Guessing at that
+costs a round of failed queries every time.
 
 ## Shape
 
-Single-file Python CLI, stdlib only. Reads one file or stdin.
+Single-file Python CLI, stdlib only. Reads a `.jsonl` file or stdin.
 
-- Normalise each line into a template by replacing the variable parts with
-  placeholders: ISO timestamps, epoch numbers, UUIDs, hex ids of 8+ chars, IPv4
-  with optional port, long numbers, quoted strings over 40 chars.
-- Group identical templates, count them, keep the first and last raw line seen
-  for each, and one sample at full length.
-- Print ranked by count descending, ties broken by template text so output is
-  stable and diffable.
-- `--top N` (default 20), `--json`, `--samples N` (raw examples per template,
-  default 1).
-- If lines carry ISO-8601 timestamps, report per-template first and last
-  timestamp; skip quietly when they do not.
+Per key, report:
 
-Deterministic: the same input produces byte-identical output.
+- `present` — lines where the key exists, and `missing` = total - present
+- `types` — the set of JSON types seen (object, array, string, number,
+  boolean, null), sorted
+- `nulls` — count where the value is `null`
+- `distinct` — distinct value count, computed exactly up to `--max-card`
+  (default 1000) and reported as `>=1000` beyond that, so memory stays bounded
+- for numbers: `min`, `max`, and whether every value is integral
+- for strings with `distinct <= 20`: the values themselves, sorted, with counts
+- `example` — one representative value, truncated to 80 chars
+
+Also: total lines, malformed lines skipped and counted, and duplicate-key
+detection is out of scope. Sorted by key. `--json`.
 
 ## Acceptance check
 
 ```
-python3 log_triage.py --json fixtures/noisy.log \
-  | python3 -c "import json,sys; d=json.load(sys.stdin); \
-assert len(d['templates'])==3, len(d['templates']); \
-assert d['templates'][0]['count']==4; print('OK')"
+python3 jsonl_profile.py --json fixtures/events.jsonl \
+  | python3 -c "import json,sys; d=json.load(sys.stdin); k=d['keys']; \
+assert d['lines']==10; \
+assert k['user_id']['distinct']==3; \
+assert k['note']['nulls']==4; \
+assert k['status']['values']; print('OK')"
 ```
 
-Plus a test asserting that two runs on the same fixture are byte-identical, and
-that a log with no repeated lines keeps every line distinct.
+Plus a test that a malformed line increments `malformed` and does not abort the
+run, and that a key present in every line reports `missing: 0`.
 
 ## Out of scope
 
-Live tailing, regex dialects, ML clustering, cross-file correlation, colour.
+JSON Schema output, type coercion, nested path flattening beyond one level,
+streaming gigabytes, network.
 
 ## Notes
 
-Ranking by count is the point: the dominant template is usually the symptom and
-the rare one is usually the cause. Say that in the output header, one line.
+Nested objects: report first-level keys only, and name the nested key as
+`parent.child` up to two levels, then stop. Depth without bound is how these
+tools become unusable.
 
 ## History
 
@@ -343,14 +348,15 @@ the rare one is usually the cause. Say that in the output header, one line.
 
 ## delivery-log/2026-W45.md
 
-bytes: 385  sha256: cb4598c1de36deb22ea44e208a69c5301d3b59e7ac2cd9d8b6d6528b28b1d265
+bytes: 528  sha256: 2bf700962159d4d7bc73cafb6c498d0519e3511765b86a1ffcc368f897501617
 
 ```markdown
 001 — deterministic stdlib repository brief with regression tests — https://github.com/disbenovi/idea-lab/pull/1 — shipped
 002 — pr-digest: offline diff risks and reviewer checklist — https://github.com/disbenovi/idea-lab/pull/2 — shipped
 003 — routine-lint: offline schedule validation and local/UTC previews — https://github.com/disbenovi/idea-lab/pull/3 — shipped
+004 — log-triage: deterministic offline template ranking with samples and tests — https://github.com/disbenovi/idea-lab/pull/4 — shipped
 ```
 
 ---
 
-total bytes: 11065
+total bytes: 11299
